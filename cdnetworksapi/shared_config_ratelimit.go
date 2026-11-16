@@ -136,27 +136,6 @@ type ASNCondition struct {
 	ASNList   []uint32 `json:"asnList"`
 }
 
-// GetSharedRateLimitRules
-type GetSharedRateLimitRulesRequest struct {
-	RuleName string `json:"ruleName,omitempty"`
-}
-
-type GetSharedRateLimitRulesResponse struct {
-	Code string          `json:"code"`
-	Msg  string          `json:"msg"`
-	Data []RateLimitRule `json:"data"`
-}
-
-func (c *Client) GetSharedRateLimitRules(request *GetSharedRateLimitRulesRequest) (response *GetSharedRateLimitRulesResponse, err error) {
-	_, err = c.DoJsonApiRequest(Request{
-		Method: HttpPost,
-		Path:   "/api/v2/share-rate-limit/get-rule-list",
-		Body:   request,
-	}, &response)
-
-	return
-}
-
 // AddSharedRateLimitRule
 type AddSharedRateLimitRuleRequest struct {
 	RuleName               string                  `json:"ruleName"`
@@ -187,6 +166,90 @@ func (c *Client) AddSharedRateLimitRule(serviceType string, request *AddSharedRa
 	_, err = c.DoJsonApiRequest(Request{
 		Method: HttpPost,
 		Path:   "/api/v2/share-rate-limit/add-rule",
+		Header: header,
+		Body:   request,
+	}, &response)
+
+	return
+}
+
+// GetSharedRateLimitRules
+type GetSharedRateLimitRulesRequest struct {
+	RuleName string `json:"ruleName,omitempty"`
+}
+
+type GetSharedRateLimitRulesResponse struct {
+	Code string          `json:"code"`
+	Msg  string          `json:"msg"`
+	Data []RateLimitRule `json:"data"`
+}
+
+func (c *Client) GetSharedRateLimitRules(request *GetSharedRateLimitRulesRequest) (response *GetSharedRateLimitRulesResponse, err error) {
+	_, err = c.DoJsonApiRequest(Request{
+		Method: HttpPost,
+		Path:   "/api/v2/share-rate-limit/get-rule-list",
+		Body:   request,
+	}, &response)
+
+	return
+}
+
+// UpdateSharedRateLimitRule
+type UpdateSharedRateLimitRuleRequest struct {
+	ID                     string                  `json:"id"`
+	RuleName               string                  `json:"ruleName,omitempty"`
+	Description            string                  `json:"description,omitempty"`
+	StatisticalItems       []StatisticalItem       `json:"statisticalItems,omitempty"`
+	StatisticalPeriod      int                     `json:"statisticalPeriod,omitempty"`
+	TriggerThreshold       int                     `json:"triggerThreshold,omitempty"`
+	InterceptTime          int                     `json:"interceptTime,omitempty"`
+	EffectiveStatus        string                  `json:"effectiveStatus,omitempty"`
+	RateLimitEffective     *RateLimitEffective     `json:"rateLimitEffective,omitempty"`
+	Action                 string                  `json:"action,omitempty"`
+	RateLimitRuleCondition *RateLimitRuleCondition `json:"rateLimitRuleCondition,omitempty"`
+	RedirectURL            string                  `json:"redirectUrl,omitempty"`
+}
+
+type UpdateSharedRateLimitRuleResponse struct {
+	Code string `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+func (c *Client) UpdateSharedRateLimitRule(serviceType string, request *UpdateSharedRateLimitRuleRequest) (response *UpdateSharedRateLimitRuleResponse, err error) {
+	header := make(http.Header)
+	if serviceType != "" {
+		header.Set("serviceType", serviceType)
+	}
+
+	_, err = c.DoJsonApiRequest(Request{
+		Method: HttpPost,
+		Path:   "/api/v2/share-rate-limit/update-rule",
+		Header: header,
+		Body:   request,
+	}, &response)
+
+	return
+}
+
+// DeleteSharedRateLimitRules
+type DeleteSharedRateLimitRulesRequest struct {
+	IDs []string `json:"ids"`
+}
+
+type DeleteSharedRateLimitRulesResponse struct {
+	Code string `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+func (c *Client) DeleteSharedRateLimitRules(serviceType string, request *DeleteSharedRateLimitRulesRequest) (response *DeleteSharedRateLimitRulesResponse, err error) {
+	header := make(http.Header)
+	if serviceType != "" {
+		header.Set("serviceType", serviceType)
+	}
+
+	_, err = c.DoJsonApiRequest(Request{
+		Method: HttpPost,
+		Path:   "/api/v1/share-rate-limit/delete-by-ids",
 		Header: header,
 		Body:   request,
 	}, &response)
