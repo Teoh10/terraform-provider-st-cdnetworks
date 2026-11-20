@@ -3,6 +3,7 @@ package cdnetworks
 import (
 	"context"
 	"fmt"
+	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -128,7 +129,7 @@ type ja4ConditionModel struct {
 
 type asnConditionModel struct {
 	MatchType types.String `tfsdk:"match_type"`
-	ASNList   []int64      `tfsdk:"asn_list"`
+	ASNList   []string     `tfsdk:"asn_list"`
 }
 
 type sharedConfigRatelimitResource struct {
@@ -562,11 +563,14 @@ func (r *sharedConfigRatelimitResource) Schema(_ context.Context, req resource.S
 								},
 								"asn_list": schema.ListAttribute{
 									Description: "ASN list, positive integers within 1 - 4294967295.",
-									ElementType: types.Int64Type,
+									ElementType: types.StringType,
 									Required:    true,
 									Validators: []validator.List{
-										listvalidator.ValueInt64sAre(int64validator.Between(1, 4294967295)),
-									},
+                                                                        	listvalidator.ValueStringsAre(
+                                                                                	stringvalidator.RegexMatches(regexp.MustCompile("^[1-9][0-9]{0,9}$"),
+                                                                                        	"must be a positive integer within 1 - 4294967295"),
+										),
+                                                                	},
 								},
 							},
 						},
@@ -871,13 +875,9 @@ func buildRateLimitRuleConditionFromModel(condition *rateLimitRuleConditionModel
 		})
 	}
 	for _, c := range condition.ASNConditions {
-		asnList := make([]uint32, 0, len(c.ASNList))
-		for _, asn := range c.ASNList {
-			asnList = append(asnList, uint32(asn))
-		}
 		result.ASNConditions = append(result.ASNConditions, cdnetworksapi.ASNCondition{
 			MatchType: c.MatchType.ValueString(),
-			ASNList:   asnList,
+			ASNList:   c.ASNList,
 		})
 	}
 	return result
@@ -954,7 +954,7 @@ func buildStatisticalItemsFromRule(items []cdnetworksapi.StatisticalItem) []stat
 // buildRateLimitEffectiveFromRule converts the effective cycle of the API
 // representation to the model.
 func buildRateLimitEffectiveFromRule(effective *cdnetworksapi.RateLimitEffective) *rateLimitEffectiveModel {
-	if effective == nil {
+	if effective == nil || len(effective.Effective) == 0 {
 		return nil
 	}
 	return &rateLimitEffectiveModel{
@@ -1047,13 +1047,9 @@ func buildRateLimitRuleConditionFromRule(condition *cdnetworksapi.RateLimitRuleC
 		})
 	}
 	for _, c := range condition.ASNConditions {
-		asnList := make([]int64, 0, len(c.ASNList))
-		for _, asn := range c.ASNList {
-			asnList = append(asnList, int64(asn))
-		}
 		result.ASNConditions = append(result.ASNConditions, asnConditionModel{
 			MatchType: types.StringValue(c.MatchType),
-			ASNList:   asnList,
+			ASNList:   c.ASNList,
 		})
 	}
 	return result

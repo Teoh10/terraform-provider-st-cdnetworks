@@ -1,6 +1,9 @@
 package cdnetworksapi
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+)
 
 // AssociateSharedRateLimitRule
 type AssociateSharedRateLimitRuleRequest struct {
@@ -9,8 +12,8 @@ type AssociateSharedRateLimitRuleRequest struct {
 }
 
 type AssociateSharedRateLimitRuleResponse struct {
-	Code string `json:"code"`
-	Msg  string `json:"msg"`
+	Code json.Number `json:"code"`
+	Msg  string      `json:"msg"`
 }
 
 func (c *Client) AssociateSharedRateLimitRule(serviceType string, request *AssociateSharedRateLimitRuleRequest) (response *AssociateSharedRateLimitRuleResponse, err error) {
@@ -36,8 +39,8 @@ type DisassociateSharedRateLimitRuleRequest struct {
 }
 
 type DisassociateSharedRateLimitRuleResponse struct {
-	Code string `json:"code"`
-	Msg  string `json:"msg"`
+	Code json.Number `json:"code"`
+	Msg  string      `json:"msg"`
 }
 
 func (c *Client) DisassociateSharedRateLimitRule(serviceType string, request *DisassociateSharedRateLimitRuleRequest) (response *DisassociateSharedRateLimitRuleResponse, err error) {

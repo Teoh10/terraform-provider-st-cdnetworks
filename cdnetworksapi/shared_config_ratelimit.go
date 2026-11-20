@@ -1,6 +1,9 @@
 package cdnetworksapi
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+)
 
 // Overall RateLimitRule response
 type RateLimitRule struct {
@@ -133,7 +136,7 @@ type JA4Condition struct {
 // Autonomous System Number matching.
 type ASNCondition struct {
 	MatchType string   `json:"matchType"`
-	ASNList   []uint32 `json:"asnList"`
+	ASNList   []string `json:"asnList"`
 }
 
 // AddSharedRateLimitRule
@@ -152,9 +155,9 @@ type AddSharedRateLimitRuleRequest struct {
 }
 
 type AddSharedRateLimitRuleResponse struct {
-	Code string `json:"code"`
-	Msg  string `json:"msg"`
-	Data string `json:"data"`
+	Code json.Number `json:"code"`
+	Msg  string      `json:"msg"`
+	Data string      `json:"data"`
 }
 
 func (c *Client) AddSharedRateLimitRule(serviceType string, request *AddSharedRateLimitRuleRequest) (response *AddSharedRateLimitRuleResponse, err error) {
@@ -179,7 +182,7 @@ type GetSharedRateLimitRulesRequest struct {
 }
 
 type GetSharedRateLimitRulesResponse struct {
-	Code string          `json:"code"`
+	Code json.Number     `json:"code"`
 	Msg  string          `json:"msg"`
 	Data []RateLimitRule `json:"data"`
 }
@@ -211,8 +214,8 @@ type UpdateSharedRateLimitRuleRequest struct {
 }
 
 type UpdateSharedRateLimitRuleResponse struct {
-	Code string `json:"code"`
-	Msg  string `json:"msg"`
+	Code json.Number `json:"code"`
+	Msg  string      `json:"msg"`
 }
 
 func (c *Client) UpdateSharedRateLimitRule(serviceType string, request *UpdateSharedRateLimitRuleRequest) (response *UpdateSharedRateLimitRuleResponse, err error) {
@@ -237,8 +240,8 @@ type DeleteSharedRateLimitRulesRequest struct {
 }
 
 type DeleteSharedRateLimitRulesResponse struct {
-	Code string `json:"code"`
-	Msg  string `json:"msg"`
+	Code json.Number `json:"code"`
+	Msg  string      `json:"msg"`
 }
 
 func (c *Client) DeleteSharedRateLimitRules(serviceType string, request *DeleteSharedRateLimitRulesRequest) (response *DeleteSharedRateLimitRulesResponse, err error) {
