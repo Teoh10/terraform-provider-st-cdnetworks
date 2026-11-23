@@ -566,11 +566,11 @@ func (r *sharedConfigRatelimitResource) Schema(_ context.Context, req resource.S
 									ElementType: types.StringType,
 									Required:    true,
 									Validators: []validator.List{
-                                                                        	listvalidator.ValueStringsAre(
-                                                                                	stringvalidator.RegexMatches(regexp.MustCompile("^[1-9][0-9]{0,9}$"),
-                                                                                        	"must be a positive integer within 1 - 4294967295"),
+										listvalidator.ValueStringsAre(
+											stringvalidator.RegexMatches(regexp.MustCompile("^[1-9][0-9]{0,9}$"),
+												"must be a positive integer within 1 - 4294967295"),
 										),
-                                                                	},
+									},
 								},
 							},
 						},
@@ -598,7 +598,7 @@ func (r *sharedConfigRatelimitResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("[API ERROR] Fail to Add SharedConfigRateLimit", err.Error())
 		return
 	}
-	if addResponse.Code != "200" {
+	if addResponse.Code != 200 {
 		resp.Diagnostics.AddError("[API ERROR] Fail to Add SharedConfigRateLimit", fmt.Sprintf("code: %s, msg: %s", addResponse.Code, addResponse.Msg))
 		return
 	}
@@ -663,7 +663,7 @@ func (r *sharedConfigRatelimitResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("[API ERROR] Fail to Update SharedConfigRateLimit", err.Error())
 		return
 	}
-	if updateResponse.Code != "200" {
+	if updateResponse.Code != 200 {
 		resp.Diagnostics.AddError("[API ERROR] Fail to Update SharedConfigRateLimit", fmt.Sprintf("code: %s, msg: %s", updateResponse.Code, updateResponse.Msg))
 		return
 	}
@@ -701,7 +701,7 @@ func (r *sharedConfigRatelimitResource) Delete(ctx context.Context, req resource
 		resp.Diagnostics.AddError("[API ERROR] Fail to Delete SharedConfigRateLimit", err.Error())
 		return
 	}
-	if deleteResponse.Code != "200" {
+	if deleteResponse.Code != 200 {
 		resp.Diagnostics.AddError("[API ERROR] Fail to Delete SharedConfigRateLimit", fmt.Sprintf("code: %s, msg: %s", deleteResponse.Code, deleteResponse.Msg))
 		return
 	}
@@ -743,7 +743,7 @@ func findSharedRateLimitRule(client *cdnetworksapi.Client, id string) (*cdnetwor
 	if err != nil {
 		return nil, err
 	}
-	if getResponse.Code != "200" {
+	if getResponse.Code != 200 {
 		return nil, fmt.Errorf("code: %s, msg: %s", getResponse.Code, getResponse.Msg)
 	}
 	for i := range getResponse.Data {
